@@ -7,6 +7,7 @@ testing_lines = []
 with open("data/test.txt") as f:
     testing_lines = f.readlines()
 
+# PREPROCESSING
 # Now to pad each line with start and end symbol for training and testing data 
 training_padded_lines = []
 testing_padded_lines = []
@@ -66,4 +67,5 @@ def replace_unknowns(training_word_dict_with_unknown, testing_tokens):
 
 replace_unknowns(training_word_dict_with_unknown, testing_tokens) 
 testing_word_dict_with_unknown = create_word_count_dict(testing_tokens)         
-print(testing_word_dict_with_unknown)
+
+# MODEL TRAINING
