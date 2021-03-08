@@ -1,3 +1,7 @@
+# imports 
+import re
+import math 
+
 # First load in the data 
 training_lines = []
 with open("data/train.txt") as f:
@@ -6,38 +10,25 @@ with open("data/train.txt") as f:
 testing_lines = []
 with open("data/test.txt") as f:
     testing_lines = f.readlines()
-
 ############################################################################
 # PREPROCESSING
-# Now to pad each line with start and end symbol for training and testing data 
-training_padded_lines = []
-testing_padded_lines = []
 
-def create_padded_lines(sentence_list):
-    count = 0
-    output_list = []
-    for line in sentence_list:
-        count += 1
-        padded_line = "<s> " + line.lower() + " </s>"
-        output_list.append(padded_line)
-    return output_list
-
-training_padded_lines = create_padded_lines(training_lines)
-testing_padded_lines = create_padded_lines(testing_lines)
-
-# Now to create a list of words without unknowns
-def create_word_list(sentence_list):
-    output_list = []
-    for line in sentence_list:
+def create_padded_word_list(sentence_list):
+    padded_corpus = []
+    input_word_list = []
+    for line in sentence_list: 
+        padded_line = "<s> " + line + " </s>"
+        padded_corpus.append(padded_line)
+    
+    for line in padded_corpus:
         words = line.split()
         for word in words:
-            output_list.append(word)
-    return output_list
+            input_word_list.append(word)
+    return input_word_list
 
 
-training_tokens = create_word_list(training_padded_lines)
-testing_tokens = create_word_list(testing_padded_lines)
-
+training_tokens = create_padded_word_list(training_lines)
+testing_tokens = create_padded_word_list(testing_lines)
 
 # Create a dictionary of words without <unk>
 def create_word_count_dict(input_word_list):
@@ -62,14 +53,16 @@ for i in range(len(training_tokens)):
 training_word_dict_with_unknown = create_word_count_dict(training_tokens)
 
 # Replace words seen in testing not in training with <unk> 
-def replace_unknowns(training_word_dict_with_unknown, testing_tokens):
+def replace_unknown_test_word(testing_tokens, training_word_dict_with_unknown):
     replacement_word = "<unk>"
     for i in range(len(testing_tokens)):
-        if not training_word_dict_with_unknown.__contains__(testing_tokens[i]):
+        word = testing_tokens[i]
+        if not training_word_dict_with_unknown.__contains__(word):
             testing_tokens[i] = replacement_word    
 
-replace_unknowns(training_word_dict_with_unknown, testing_tokens) 
 testing_word_dict_with_unknown = create_word_count_dict(testing_tokens)         
+
+replace_unknown_test_word(testing_tokens, training_word_dict_with_unknown) 
 
 ##################################################################################
 # MODEL TRAINING
@@ -156,3 +149,114 @@ def find_vocabulary_size(training_word_dict_with_unknown):
 number_of_unique_words_training = find_vocabulary_size(training_word_dict_with_unknown)
 print("Answer to Question No.1")
 print(f"The number of unique words in the training corpus is {number_of_unique_words_training}")
+
+# 2. How many tokens are there in the training corpus? 
+def find_token_number(training_word_dict_with_unknown):
+    total_token_num = sum(training_word_dict_with_unknown.values())
+    return total_token_num
+
+print("Answer to Question No.2")
+print(f"The number of tokens in the training corpus is {find_token_number(training_word_dict_with_unknown)}")
+
+# 3. Find percentage of word tokens and word types in the test corpus that did not 
+# occur in training before mapping unknown in training and test data
+def question_three(training_word_dict, testing_word_dict):
+    unseen_test_word_dict = dict()
+    # Create a dictionary of testing words not in training
+    for key, value in testing_word_dict.items():
+        if key not in training_word_dict:
+            unseen_test_word_dict[key] = value
+    
+    # now to print number of unique words
+    num_of_unique_words_unseen = len(unseen_test_word_dict)
+    sum_of_tokens_unseen = sum(unseen_test_word_dict.values())
+    
+    # work out percentage of word types and word types 
+    num_of_words_test = len(testing_word_dict)
+    num_of_tokens_test = sum(testing_word_dict.values())
+    
+    percentage_words_unseen = (num_of_unique_words_unseen / num_of_words_test) * 100
+    percentage_tokens_unseen = (sum_of_tokens_unseen / num_of_tokens_test) * 100
+    
+    # print out the value 
+    print("Answer to Question No.3")
+    print(f"The percentage of words unseen in test is {percentage_words_unseen}")
+    print(f"The percentage of tokens unseen in test is {percentage_tokens_unseen}")
+
+question_three(training_word_dict, testing_word_dict)
+
+# 4. Now replace singletons in the training data with < unk > symbol and 
+# map words (in the test corpus) not observed in training to < unk >. 
+# What percentage of bigrams (bigram types and bigram tokens) in the test corpus 
+# did not occur in training (treat "< unk >" as a regular token that has been observed).
+def question_four(testing_words, bigram_count_dict, count_bigram_occurences):
+    # create the bigram dictionary for test words 
+    test_bigram_word_dict = count_bigram_occurences(testing_words)
+    
+    # create a dictionary to hold unseen values in test and populate
+    test_bigram_word_dict_unseen = dict()
+    for key,value in test_bigram_word_dict.items():
+        if key not in bigram_count_dict:
+            test_bigram_word_dict_unseen[key] = value
+    
+    # now to count the values 
+    num_unique_bigrams_test = len(test_bigram_word_dict)
+    sum_bigrams_test = sum(test_bigram_word_dict.values())
+    num_unique_bigrams_test_unseen = len(test_bigram_word_dict_unseen)
+    sum_bigrams_test_unseen = sum(test_bigram_word_dict_unseen.values())
+    
+    # calculate the percentages 
+    percentage_test_word_unseen  = (num_unique_bigrams_test_unseen / num_unique_bigrams_test) * 100
+    percentage_test_token_unseen  = (sum_bigrams_test_unseen / sum_bigrams_test) * 100
+
+    print("Answer to Question No.4")
+    print(f"Percentage of unique bigrams in test not in training is {percentage_test_word_unseen}")
+    print(f"Percentage of bigram tokens in test not in training is {percentage_test_token_unseen}")
+
+question_four(testing_tokens, bigram_count_dict, count_bigram_occurences)
+
+# 5. Compute the log probability of the following sentence under the three models 
+# (ignore capitalization and pad each sentence as described above). 
+# Please list all of the parameters required to compute the probabilities 
+# and show the complete calculation. Which of the parameters have zero values 
+# under each model? Use log base 2 in your calculations. 
+# Map words not observed in the training corpus to the < unk > token.
+# I look forward to hearing your reply .
+print("Answer to Question No.5")
+def remove_period(input_list):
+    for i  in range(len(input_list)):
+        input_list[i] = re.sub('[\.]', '', input_list[i])
+    return input_list
+
+# First create a padded word list and replace the unknown test words with unk
+input_sentence = ["I look forward to hearing your reply."] # remove the period
+
+# remove the period 
+input_sentence_no_period = remove_period(input_sentence)
+
+# create the word list with padded symbols
+padded_word_list = create_padded_word_list(input_sentence_no_period)
+
+# replace the unknown words in with <unk>
+replace_unknown_test_word(padded_word_list, training_word_dict)
+processed_word_list = padded_word_list
+
+##  Unigram Log Probability 
+def calculate_log_probability_unigram(model_evaluation_function, probability_dict, word_list):    
+    num_of_tokens = len(word_list)
+    # calculate the log probability 
+    log_probability = (1/ num_of_tokens) * math.log2(model_evaluation_function(word_list, probability_dict))
+    return log_probability 
+
+unigram_log_probability = calculate_log_probability_unigram(calc_unigram_model_evaluation, training_word_dict_with_unknown, processed_word_list)
+print(f"1. Unigram Log Probability {unigram_log_probability}")
+
+# Bigram Log Probability 
+bigram_model_evaluation_line = calc_bigram_model_evaluation(processed_word_list, bigram_count_dict, training_word_dict_with_unknown)
+print(f"2. Bigram Model Evaluation {bigram_model_evaluation_line}\nAs it is zero, there is no log probability")
+
+def calculate_log_probability_bigram(word_list, calc_bigram_evaluation, bigram_word_dict, word_count_dict):
+    num_of_tokens = len(word_list)
+    model_evaluation = calc_bigram_evaluation(word_list, bigram_word_dict)
+    log_probability = (1/ num_of_tokens) * math.log2(model_evaluation)
+    return log_probability  
