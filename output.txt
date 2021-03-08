@@ -1,0 +1,31 @@
+Answer to Question No.1
+The number of unique words in the training corpus is 48849
+
+Answer to Question No.2
+The number of tokens in the training corpus is 2568210
+
+Answer to Question No.3
+The percentage of words unseen in test is 3.8665655799848366
+The percentage of tokens unseen in test is 1.8124782154060648
+
+Answer to Question No.4
+Percentage of unique bigrams in test not in training is 27.112232030264817
+Percentage of bigram tokens in test not in training is 22.594142259414227
+
+Answer to Question No.5
+1. Unigram Log Probability 11.237213101803032
+2. Bigram Model Evaluation 0.0
+As it is zero, there is no log probability
+3.Bigram Add One Log Probability -10.886627464256735
+
+Answer to Question No 6
+Perplexity of sentence under unigram model 0.0004142493052169832
+Perplexity of sentence under add one bigram model 1893.2214588316376
+
+Answer to Question No.7
+The unigram log probability for the test corpus is 11.094268538278245
+Perplexity of test corpus under unigram model 0.0004573960291874701
+Bigram Model evalaution without log 0.0
+As the bigram model evaluation is zero, there is no log probability
+Add One Bigram Model evalaution without log 0.0
+As the add one bigram model evaluation is zero, there is no log probability

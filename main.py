@@ -148,15 +148,16 @@ def find_vocabulary_size(training_word_dict_with_unknown):
 
 number_of_unique_words_training = find_vocabulary_size(training_word_dict_with_unknown)
 print("Answer to Question No.1")
-print(f"The number of unique words in the training corpus is {number_of_unique_words_training}")
+print(f"The number of unique words in the training corpus is {number_of_unique_words_training}" )
 
 # 2. How many tokens are there in the training corpus? 
 def find_token_number(training_word_dict_with_unknown):
     total_token_num = sum(training_word_dict_with_unknown.values())
     return total_token_num
 
+print()
 print("Answer to Question No.2")
-print(f"The number of tokens in the training corpus is {find_token_number(training_word_dict_with_unknown)}")
+print(f"The number of tokens in the training corpus is {find_token_number(training_word_dict_with_unknown)}" )
 
 # 3. Find percentage of word tokens and word types in the test corpus that did not 
 # occur in training before mapping unknown in training and test data
@@ -179,9 +180,10 @@ def question_three(training_word_dict, testing_word_dict):
     percentage_tokens_unseen = (sum_of_tokens_unseen / num_of_tokens_test) * 100
     
     # print out the value 
-    print("Answer to Question No.3")
-    print(f"The percentage of words unseen in test is {percentage_words_unseen}")
-    print(f"The percentage of tokens unseen in test is {percentage_tokens_unseen}")
+    print()
+    print("Answer to Question No.3" )
+    print(f"The percentage of words unseen in test is {percentage_words_unseen}" )
+    print(f"The percentage of tokens unseen in test is {percentage_tokens_unseen}" )
 
 question_three(training_word_dict, testing_word_dict)
 
@@ -209,9 +211,10 @@ def question_four(testing_words, bigram_count_dict, count_bigram_occurences):
     percentage_test_word_unseen  = (num_unique_bigrams_test_unseen / num_unique_bigrams_test) * 100
     percentage_test_token_unseen  = (sum_bigrams_test_unseen / sum_bigrams_test) * 100
 
-    print("Answer to Question No.4")
-    print(f"Percentage of unique bigrams in test not in training is {percentage_test_word_unseen}")
-    print(f"Percentage of bigram tokens in test not in training is {percentage_test_token_unseen}")
+    print()
+    print("Answer to Question No.4" )
+    print(f"Percentage of unique bigrams in test not in training is {percentage_test_word_unseen}" )
+    print(f"Percentage of bigram tokens in test not in training is {percentage_test_token_unseen}" )
 
 question_four(testing_tokens, bigram_count_dict, count_bigram_occurences)
 
@@ -222,6 +225,7 @@ question_four(testing_tokens, bigram_count_dict, count_bigram_occurences)
 # under each model? Use log base 2 in your calculations. 
 # Map words not observed in the training corpus to the < unk > token.
 # I look forward to hearing your reply .
+print()
 print("Answer to Question No.5")
 def remove_period(input_list):
     for i  in range(len(input_list)):
@@ -249,11 +253,11 @@ def calculate_log_probability_unigram(model_evaluation_function, probability_dic
     return log_probability 
 
 unigram_log_probability = calculate_log_probability_unigram(calc_unigram_model_evaluation, training_word_dict_with_unknown, processed_word_list)
-print(f"1. Unigram Log Probability {unigram_log_probability}")
+print(f"1. Unigram Log Probability {unigram_log_probability}" )
 
 ## Bigram Log Probability 
 bigram_model_evaluation_line = calc_bigram_model_evaluation(processed_word_list, bigram_count_dict, training_word_dict_with_unknown)
-print(f"2. Bigram Model Evaluation {bigram_model_evaluation_line}\nAs it is zero, there is no log probability")
+print(f"2. Bigram Model Evaluation {bigram_model_evaluation_line}\nAs it is zero, there is no log probability" )
 
 def calculate_log_probability_bigram(word_list, calc_bigram_evaluation, bigram_word_dict, word_count_dict):
     num_of_tokens = len(word_list)
@@ -286,40 +290,42 @@ def calculate_log_probability_bigram_add_one(word_list,calc_bigram_add_one_model
     return log_probability 
 
 bigram_add_one_log_probability = calculate_log_probability_bigram_add_one(processed_word_list, calc_bigram_add_one_model_evaluation, bigram_count_dict, training_word_dict_with_unknown)
-print(f"3.Bigram Add One Log Probability {bigram_add_one_log_probability}")   
+print(f"3.Bigram Add One Log Probability {bigram_add_one_log_probability}" )   
 
 # 6. Compute the perplexity of the sentence above under each of the models.
-print("Answer to Question No 6")
+print()
+print("Answer to Question No 6" )
 
 # perplexity for the unigram model
 input_unigram_perplexity = 2 ** -(unigram_log_probability)
-print(f"Perplexity of sentence under unigram model {input_unigram_perplexity}")
+print(f"Perplexity of sentence under unigram model {input_unigram_perplexity}" )
 
 # perplexity for the add one bigram model 
 input_add_one_bigram_perplexity = 2 ** -(bigram_add_one_log_probability)
-print(f"Perplexity of sentence under add one bigram model {input_add_one_bigram_perplexity}")
+print(f"Perplexity of sentence under add one bigram model {input_add_one_bigram_perplexity}" )
 
 # 7. Compute the perplexity of the entire test corpus under each of the models. 
 # Discuss the differences in the results you obtained. 
-print("Answer to Question No.7")
+print()
+print("Answer to Question No.7" )
 # Unigram Model Evaluation on Test Corpus 
 # we have testing words preprocessed already
 unigram_log_probability_test  = calculate_log_probability_unigram(calc_unigram_model_evaluation, training_word_dict_with_unknown, testing_tokens)
-print(f"The unigram log probability for the test corpus is {unigram_log_probability_test}")
+print(f"The unigram log probability for the test corpus is {unigram_log_probability_test}" )
 perplexity_unigram_test = 2 ** -(unigram_log_probability_test)
-print(f"Perplexity of test corpus under unigram model {perplexity_unigram_test}")
+print(f"Perplexity of test corpus under unigram model {perplexity_unigram_test}" )
 
 # Bigram Model Evaluation on Test Corpus
 # first find model evaluation 
 bigram_model_evaluation_test = calc_bigram_model_evaluation(testing_tokens, bigram_count_dict, training_word_dict_with_unknown)
-print(f"Bigram Model evalaution without log {bigram_model_evaluation_test}")
+print(f"Bigram Model evalaution without log {bigram_model_evaluation_test}" )
 # bigram_log_probability_test = calculate_log_probability_bigram(testing_words,calc_bigram_model_evaluation, bigram_probability_dict, training_word_dict_with_unknown)
 # print(f"Bigram Log Probability on test corpus {bigram_log_probability_test}")
-print("As the bigram model evaluation is zero, there is no log probability")
+print("As the bigram model evaluation is zero, there is no log probability" )
 
 # Add-one Bigram Model Evaluation on Test Corpus
 bigram_add_one_model_evaluation_test = calc_bigram_add_one_model_evaluation(testing_tokens, bigram_count_dict, training_word_dict_with_unknown)
-print(f"Add One Bigram Model evalaution without log {bigram_add_one_model_evaluation_test}")
-print("As the add one bigram model evaluation is zero, there is no log probability")
+print(f"Add One Bigram Model evalaution without log {bigram_add_one_model_evaluation_test}" )
+print("As the add one bigram model evaluation is zero, there is no log probability" )
 # bigram_add_one_log_probability_test = calculate_log_probability_bigram_add_one(testing_words, calc_bigram_add_one_model_evaluation, bigram_count_dict, training_word_dict_with_unknown)
 # print(f"Bigram Add One Log Probability {bigram_add_one_log_probability_test}")
