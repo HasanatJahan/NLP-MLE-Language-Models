@@ -12,29 +12,21 @@ with open("data/test.txt") as f:
 training_padded_lines = []
 testing_padded_lines = []
 
-def create_padded_lines(sentence_list):
-    count = 0
-    output_list = []
-    for line in sentence_list:
-        count += 1
-        padded_line = "<s> " + line.lower() + " </s>"
-        output_list.append(padded_line)
-    return output_list
-
-training_padded_lines = create_padded_lines(training_lines)
-testing_padded_lines = create_padded_lines(testing_lines)
-
-# Now to create a list of words without unknowns
-def create_word_list(sentence_list):
-    output_list = []
-    for line in sentence_list:
+def create_padded_word_list(sentence_list):
+    padded_corpus = []
+    input_word_list = []
+    for line in sentence_list: 
+        padded_line = "<s> " + line + " </s>"
+        padded_corpus.append(padded_line)
+    
+    for line in padded_corpus:
         words = line.split()
         for word in words:
-            output_list.append(word)
-    return output_list
+            input_word_list.append(word)
+    return input_word_list
 
-training_tokens = create_word_list(training_padded_lines)
-testing_tokens = create_word_list(testing_padded_lines)
+training_tokens = create_padded_word_list(training_padded_lines)
+testing_tokens = create_padded_word_list(testing_padded_lines)
 
 # Create a dictionary of words without <unk>
 def create_word_count_dict(input_word_list):
