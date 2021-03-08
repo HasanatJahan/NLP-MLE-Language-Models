@@ -227,19 +227,12 @@ question_four(testing_tokens, bigram_count_dict, count_bigram_occurences)
 # I look forward to hearing your reply .
 print()
 print("Answer to Question No.5")
-def remove_period(input_list):
-    for i  in range(len(input_list)):
-        input_list[i] = re.sub('[\.]', '', input_list[i])
-    return input_list
 
 # First create a padded word list and replace the unknown test words with unk
-input_sentence = ["I look forward to hearing your reply."] # remove the period
-
-# remove the period 
-input_sentence_no_period = remove_period(input_sentence)
+input_sentence = ["I look forward to hearing your reply ."]
 
 # create the word list with padded symbols
-padded_word_list = create_padded_word_list(input_sentence_no_period)
+padded_word_list = create_padded_word_list(input_sentence)
 
 # replace the unknown words in with <unk>
 replace_unknown_test_word(padded_word_list, training_word_dict)
@@ -318,7 +311,7 @@ print(f"Perplexity of test corpus under unigram model {perplexity_unigram_test}"
 # Bigram Model Evaluation on Test Corpus
 # first find model evaluation 
 bigram_model_evaluation_test = calc_bigram_model_evaluation(testing_tokens, bigram_count_dict, training_word_dict_with_unknown)
-print(f"Bigram Model evalaution without log {bigram_model_evaluation_test}" )
+print(f"Bigram Model evaluation without log {bigram_model_evaluation_test}" )
 # bigram_log_probability_test = calculate_log_probability_bigram(testing_words,calc_bigram_model_evaluation, bigram_probability_dict, training_word_dict_with_unknown)
 # print(f"Bigram Log Probability on test corpus {bigram_log_probability_test}")
 print("As the bigram model evaluation is zero, there is no log probability" )
