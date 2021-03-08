@@ -288,3 +288,38 @@ def calculate_log_probability_bigram_add_one(word_list,calc_bigram_add_one_model
 bigram_add_one_log_probability = calculate_log_probability_bigram_add_one(processed_word_list, calc_bigram_add_one_model_evaluation, bigram_count_dict, training_word_dict_with_unknown)
 print(f"3.Bigram Add One Log Probability {bigram_add_one_log_probability}")   
 
+# 6. Compute the perplexity of the sentence above under each of the models.
+print("Answer to Question No 6")
+
+# perplexity for the unigram model
+input_unigram_perplexity = 2 ** -(unigram_log_probability)
+print(f"Perplexity of sentence under unigram model {input_unigram_perplexity}")
+
+# perplexity for the add one bigram model 
+input_add_one_bigram_perplexity = 2 ** -(bigram_add_one_log_probability)
+print(f"Perplexity of sentence under add one bigram model {input_add_one_bigram_perplexity}")
+
+# 7. Compute the perplexity of the entire test corpus under each of the models. 
+# Discuss the differences in the results you obtained. 
+print("Answer to Question No.7")
+# Unigram Model Evaluation on Test Corpus 
+# we have testing words preprocessed already
+unigram_log_probability_test  = calculate_log_probability_unigram(calc_unigram_model_evaluation, training_word_dict_with_unknown, testing_tokens)
+print(f"The unigram log probability for the test corpus is {unigram_log_probability_test}")
+perplexity_unigram_test = 2 ** -(unigram_log_probability_test)
+print(f"Perplexity of test corpus under unigram model {perplexity_unigram_test}")
+
+# Bigram Model Evaluation on Test Corpus
+# first find model evaluation 
+bigram_model_evaluation_test = calc_bigram_model_evaluation(testing_tokens, bigram_count_dict, training_word_dict_with_unknown)
+print(f"Bigram Model evalaution without log {bigram_model_evaluation_test}")
+# bigram_log_probability_test = calculate_log_probability_bigram(testing_words,calc_bigram_model_evaluation, bigram_probability_dict, training_word_dict_with_unknown)
+# print(f"Bigram Log Probability on test corpus {bigram_log_probability_test}")
+print("As the bigram model evaluation is zero, there is no log probability")
+
+# Add-one Bigram Model Evaluation on Test Corpus
+bigram_add_one_model_evaluation_test = calc_bigram_add_one_model_evaluation(testing_tokens, bigram_count_dict, training_word_dict_with_unknown)
+print(f"Add One Bigram Model evalaution without log {bigram_add_one_model_evaluation_test}")
+print("As the add one bigram model evaluation is zero, there is no log probability")
+# bigram_add_one_log_probability_test = calculate_log_probability_bigram_add_one(testing_words, calc_bigram_add_one_model_evaluation, bigram_count_dict, training_word_dict_with_unknown)
+# print(f"Bigram Add One Log Probability {bigram_add_one_log_probability_test}")
