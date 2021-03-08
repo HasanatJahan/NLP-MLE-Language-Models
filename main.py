@@ -251,7 +251,7 @@ def calculate_log_probability_unigram(model_evaluation_function, probability_dic
 unigram_log_probability = calculate_log_probability_unigram(calc_unigram_model_evaluation, training_word_dict_with_unknown, processed_word_list)
 print(f"1. Unigram Log Probability {unigram_log_probability}")
 
-# Bigram Log Probability 
+## Bigram Log Probability 
 bigram_model_evaluation_line = calc_bigram_model_evaluation(processed_word_list, bigram_count_dict, training_word_dict_with_unknown)
 print(f"2. Bigram Model Evaluation {bigram_model_evaluation_line}\nAs it is zero, there is no log probability")
 
@@ -260,3 +260,31 @@ def calculate_log_probability_bigram(word_list, calc_bigram_evaluation, bigram_w
     model_evaluation = calc_bigram_evaluation(word_list, bigram_word_dict)
     log_probability = (1/ num_of_tokens) * math.log2(model_evaluation)
     return log_probability  
+
+## Add One Bigram Log Probability
+# calculates the model evaluation for add one bigram model 
+def calc_bigram_add_one_model_evaluation(word_list, bigram_word_dict, word_count_dict):
+    num_of_unique_words = len(word_count_dict)
+    final_evaluation = 1
+    for i in range(len(word_list) - 1):
+        word_pair = word_list[i] , word_list[i+1]
+        first_word = word_list[i]
+        # if the word pair exists there is a probability for it 
+        if word_pair in bigram_word_dict:
+            pair_probability = (bigram_word_dict[word_pair] + 1) / (word_count_dict[first_word] + num_of_unique_words)
+        # if it does not, there is a zero and 1 should be used 
+        else:
+            pair_probability = 1 / (word_count_dict[first_word] + num_of_unique_words)
+        final_evaluation *= pair_probability
+    return final_evaluation
+
+# calculates the log probability of add one bigram model
+def calculate_log_probability_bigram_add_one(word_list,calc_bigram_add_one_model_evaluation, bigram_word_dict, word_count_dict):    
+    num_of_tokens = len(word_list)
+    model_evaluation = calc_bigram_add_one_model_evaluation(word_list, bigram_word_dict, word_count_dict)
+    log_probability = (1/ num_of_tokens) * math.log2(model_evaluation)
+    return log_probability 
+
+bigram_add_one_log_probability = calculate_log_probability_bigram_add_one(processed_word_list, calc_bigram_add_one_model_evaluation, bigram_count_dict, training_word_dict_with_unknown)
+print(f"3.Bigram Add One Log Probability {bigram_add_one_log_probability}")   
+
