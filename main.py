@@ -58,12 +58,14 @@ def replace_unknown_test_word(testing_tokens, training_word_dict_with_unknown):
     for i in range(len(testing_tokens)):
         word = testing_tokens[i]
         if not training_word_dict_with_unknown.__contains__(word):
-            testing_tokens[i] = replacement_word    
+            testing_tokens[i] = replacement_word 
+    return testing_tokens   
 
+
+testing_tokens = replace_unknown_test_word(testing_tokens, training_word_dict_with_unknown) 
 testing_word_dict_with_unknown = create_word_count_dict(testing_tokens)         
 
-replace_unknown_test_word(testing_tokens, training_word_dict_with_unknown) 
-
+# print(testing_word_dict_with_unknown)
 ##################################################################################
 # MODEL TRAINING
 ## 1.  Unigram Maximum Likelihood Model
@@ -82,11 +84,20 @@ def create_unigram_probability_dict(word_dict):
         probability_dict[key] = calculate_word_probability_unigram(key, word_dict)
     return probability_dict 
 
-# function to evaluate unigrams 
-def calc_unigram_model_evaluation(word_list, unigram_probability_dict):
-    final_evaluation = 1
-    for word in word_list: 
-        final_evaluation *= unigram_probability_dict[word]
+# # function to evaluate unigrams 
+# def calc_unigram_model_evaluation(word_list, unigram_probability_dict):
+#     final_evaluation = 1
+#     for word in word_list: 
+#         final_evaluation *= unigram_probability_dict[word]
+#     return final_evaluation
+
+def calc_unigram_model_evaluation(word_list, training_word_dict_with_unknown):
+    number_of_tokens = sum(training_word_dict_with_unknown.values())
+    final_evaluation = 0
+    for word in word_list:
+        number_of_word_occurence = training_word_dict_with_unknown[word]
+        word_probability = number_of_word_occurence/number_of_tokens
+        final_evaluation += math.log2(word_probability)
     return final_evaluation
 
 ## 2. Bigram Maximum Likelihood Model
@@ -96,7 +107,7 @@ def count_bigram_occurences(word_list):
     for i in range(len(word_list)-1):
         word_pair = word_list[i], word_list[i+1]
         if word_pair in bigram_occurence_count:
-            bigram_occurence_count[word_pair] +=1
+            bigram_occurence_count[word_pair] += 1
         else:
             bigram_occurence_count[word_pair] = 1
     return bigram_occurence_count
@@ -106,7 +117,7 @@ bigram_count_dict = count_bigram_occurences(training_tokens)
 # function to evaluate bigrams 
 def calc_bigram_model_evaluation(word_list, bigram_word_dict, word_count_dict):
     num_of_unique_words = len(word_count_dict)
-    final_evaluation = 1
+    final_evaluation = 0
     for i in range(len(word_list) - 1):
         word_pair = word_list[i] , word_list[i+1]
         first_word = word_list[i]
@@ -118,14 +129,14 @@ def calc_bigram_model_evaluation(word_list, bigram_word_dict, word_count_dict):
             pair_probability = 0
             final_evaluation *= pair_probability
             return final_evaluation
-        final_evaluation *= pair_probability
+        final_evaluation += math.log2(pair_probability)
     return final_evaluation
 
 
 # 3. Add One Bigram Model 
 def calc_bigram_add_one_model_evaluation(word_list, bigram_word_dict, word_count_dict):
     num_of_unique_words = len(word_count_dict)
-    final_evaluation = 1
+    final_evaluation = 0
     for i in range(len(word_list) - 1):
         word_pair = word_list[i] , word_list[i+1]
         first_word = word_list[i]
@@ -135,7 +146,7 @@ def calc_bigram_add_one_model_evaluation(word_list, bigram_word_dict, word_count
         # if it does not, there is a zero and 1 should be used 
         else:
             pair_probability = 1 / (word_count_dict[first_word] + num_of_unique_words)
-        final_evaluation *= pair_probability
+        final_evaluation += math.log2(pair_probability)
     return final_evaluation
 
 ##############################################################################
@@ -235,14 +246,14 @@ input_sentence = ["I look forward to hearing your reply ."]
 padded_word_list = create_padded_word_list(input_sentence)
 
 # replace the unknown words in with <unk>
-replace_unknown_test_word(padded_word_list, training_word_dict)
-processed_word_list = padded_word_list
+processed_word_list = replace_unknown_test_word(padded_word_list, training_word_dict_with_unknown)
+print(processed_word_list)
 
 ##  Unigram Log Probability 
-def calculate_log_probability_unigram(model_evaluation_function, probability_dict, word_list):    
+def calculate_log_probability_unigram(model_evaluation_function, training_word_dict_with_unknown, word_list):    
     num_of_tokens = len(word_list)
     # calculate the log probability 
-    log_probability = (1/ num_of_tokens) * math.log2(model_evaluation_function(word_list, probability_dict))
+    log_probability = (1/ num_of_tokens) * model_evaluation_function(word_list, training_word_dict_with_unknown)
     return log_probability 
 
 unigram_log_probability = calculate_log_probability_unigram(calc_unigram_model_evaluation, training_word_dict_with_unknown, processed_word_list)
@@ -254,32 +265,15 @@ print(f"2. Bigram Model Evaluation {bigram_model_evaluation_line}\nAs it is zero
 
 def calculate_log_probability_bigram(word_list, calc_bigram_evaluation, bigram_word_dict, word_count_dict):
     num_of_tokens = len(word_list)
-    model_evaluation = calc_bigram_evaluation(word_list, bigram_word_dict)
-    log_probability = (1/ num_of_tokens) * math.log2(model_evaluation)
+    model_evaluation = calc_bigram_evaluation(word_list, bigram_word_dict, word_count_dict)
+    log_probability = (1/ num_of_tokens) * model_evaluation
     return log_probability  
-
-## Add One Bigram Log Probability
-# calculates the model evaluation for add one bigram model 
-def calc_bigram_add_one_model_evaluation(word_list, bigram_word_dict, word_count_dict):
-    num_of_unique_words = len(word_count_dict)
-    final_evaluation = 1
-    for i in range(len(word_list) - 1):
-        word_pair = word_list[i] , word_list[i+1]
-        first_word = word_list[i]
-        # if the word pair exists there is a probability for it 
-        if word_pair in bigram_word_dict:
-            pair_probability = (bigram_word_dict[word_pair] + 1) / (word_count_dict[first_word] + num_of_unique_words)
-        # if it does not, there is a zero and 1 should be used 
-        else:
-            pair_probability = 1 / (word_count_dict[first_word] + num_of_unique_words)
-        final_evaluation *= pair_probability
-    return final_evaluation
 
 # calculates the log probability of add one bigram model
 def calculate_log_probability_bigram_add_one(word_list,calc_bigram_add_one_model_evaluation, bigram_word_dict, word_count_dict):    
     num_of_tokens = len(word_list)
     model_evaluation = calc_bigram_add_one_model_evaluation(word_list, bigram_word_dict, word_count_dict)
-    log_probability = (1/ num_of_tokens) * math.log2(model_evaluation)
+    log_probability = (1/ num_of_tokens) * model_evaluation
     return log_probability 
 
 bigram_add_one_log_probability = calculate_log_probability_bigram_add_one(processed_word_list, calc_bigram_add_one_model_evaluation, bigram_count_dict, training_word_dict_with_unknown)
@@ -311,14 +305,18 @@ print(f"Perplexity of test corpus under unigram model {perplexity_unigram_test}"
 # Bigram Model Evaluation on Test Corpus
 # first find model evaluation 
 bigram_model_evaluation_test = calc_bigram_model_evaluation(testing_tokens, bigram_count_dict, training_word_dict_with_unknown)
-print(f"Bigram Model evaluation without log {bigram_model_evaluation_test}" )
-# bigram_log_probability_test = calculate_log_probability_bigram(testing_words,calc_bigram_model_evaluation, bigram_probability_dict, training_word_dict_with_unknown)
-# print(f"Bigram Log Probability on test corpus {bigram_log_probability_test}")
+bigram_log_probability_test = calculate_log_probability_bigram(testing_tokens, calc_bigram_model_evaluation, bigram_count_dict, training_word_dict_with_unknown)
+print(f"Bigram Log Probability on test corpus {bigram_log_probability_test}")
 print("As the bigram model evaluation is zero, there is no log probability" )
+# bigram_perplexity_test = 2 ** -(bigram_log_probability_test)
+# print(f"Bigram Log Perplexity {bigram_perplexity_test}")
+
 
 # Add-one Bigram Model Evaluation on Test Corpus
 bigram_add_one_model_evaluation_test = calc_bigram_add_one_model_evaluation(testing_tokens, bigram_count_dict, training_word_dict_with_unknown)
-print(f"Add One Bigram Model evalaution without log {bigram_add_one_model_evaluation_test}" )
-print("As the add one bigram model evaluation is zero, there is no log probability" )
+bigram_add_one_log_probability_test = calculate_log_probability_bigram_add_one(testing_tokens, calc_bigram_add_one_model_evaluation, bigram_count_dict, training_word_dict_with_unknown)
+print(f"Add One Smoothing Bigram Log Probability {bigram_add_one_log_probability_test}")
+bigram_add_one_perplexity_test = 2 ** -(bigram_add_one_log_probability_test)
+print(f"Add One Smoothing Bigram Perplexity {bigram_add_one_perplexity_test}")
 # bigram_add_one_log_probability_test = calculate_log_probability_bigram_add_one(testing_words, calc_bigram_add_one_model_evaluation, bigram_count_dict, training_word_dict_with_unknown)
 # print(f"Bigram Add One Log Probability {bigram_add_one_log_probability_test}")
