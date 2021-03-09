@@ -17,7 +17,7 @@ def create_padded_word_list(sentence_list):
     padded_corpus = []
     input_word_list = []
     for line in sentence_list: 
-        padded_line = "<s> " + line + " </s>"
+        padded_line = "<s> " + line.lower() + " </s>"
         padded_corpus.append(padded_line)
     
     for line in padded_corpus:
