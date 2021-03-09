@@ -306,8 +306,8 @@ print(f"Perplexity of test corpus under unigram model {perplexity_unigram_test}"
 # first find model evaluation 
 bigram_model_evaluation_test = calc_bigram_model_evaluation(testing_tokens, bigram_count_dict, training_word_dict_with_unknown)
 bigram_log_probability_test = calculate_log_probability_bigram(testing_tokens, calc_bigram_model_evaluation, bigram_count_dict, training_word_dict_with_unknown)
-print(f"Bigram Log Probability on test corpus {bigram_log_probability_test}")
-print("As the bigram model evaluation is zero, there is no log probability" )
+print(f"Bigram Model Evaluation on test corpus {bigram_model_evaluation_test}")
+print("As the bigram model evaluation is zero, there is no log probability. It is undefined" )
 # bigram_perplexity_test = 2 ** -(bigram_log_probability_test)
 # print(f"Bigram Log Perplexity {bigram_perplexity_test}")
 
