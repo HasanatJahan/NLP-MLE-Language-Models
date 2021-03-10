@@ -83,20 +83,15 @@ def create_unigram_probability_dict(word_dict):
         probability_dict[key] = calculate_word_probability_unigram(key, word_dict)
     return probability_dict 
 
-# # function to evaluate unigrams 
-# def calc_unigram_model_evaluation(word_list, unigram_probability_dict):
-#     final_evaluation = 1
-#     for word in word_list: 
-#         final_evaluation *= unigram_probability_dict[word]
-#     return final_evaluation
 
 def calc_unigram_model_evaluation(word_list, training_word_dict_with_unknown):
     number_of_tokens = sum(training_word_dict_with_unknown.values())
     final_evaluation = 0
     for word in word_list:
-        number_of_word_occurence = training_word_dict_with_unknown[word]
-        word_probability = number_of_word_occurence / number_of_tokens
-        final_evaluation += math.log2(word_probability)
+        if word != "<s>":
+            number_of_word_occurence = training_word_dict_with_unknown[word]
+            word_probability = number_of_word_occurence / number_of_tokens
+            final_evaluation += math.log2(word_probability)
     return final_evaluation
 
 ## 2. Bigram Maximum Likelihood Model
@@ -120,14 +115,15 @@ def calc_bigram_model_evaluation(word_list, bigram_word_dict, word_count_dict):
     for i in range(len(word_list) - 1):
         word_pair = word_list[i] , word_list[i+1]
         first_word = word_list[i]
-        # if the word pair exists there is a probability for it 
-        if word_pair in bigram_word_dict:
-            pair_probability = (bigram_word_dict[word_pair] + 1) / (word_count_dict[first_word] + num_of_unique_words)
-        # if it does not, zero should be used 
-        else:
-            pair_probability = 0
-            final_evaluation *= pair_probability
-            return final_evaluation
+        if word_pair != ('</s>', '<s>'):
+            # if the word pair exists there is a probability for it 
+            if word_pair in bigram_word_dict:
+                pair_probability = (bigram_word_dict[word_pair] + 1) / (word_count_dict[first_word] + num_of_unique_words)
+            # if it does not, zero should be used 
+            else:
+                pair_probability = 0
+                final_evaluation *= pair_probability
+                return final_evaluation
         final_evaluation += math.log2(pair_probability)
     return final_evaluation
 
@@ -139,12 +135,13 @@ def calc_bigram_add_one_model_evaluation(word_list, bigram_word_dict, word_count
     for i in range(len(word_list) - 1):
         word_pair = word_list[i] , word_list[i+1]
         first_word = word_list[i]
-        # if the word pair exists there is a probability for it 
-        if word_pair in bigram_word_dict:
-            pair_probability = (bigram_word_dict[word_pair] + 1) / (word_count_dict[first_word] + num_of_unique_words)
-        # if it does not, there is a zero and 1 should be used 
-        else:
-            pair_probability = 1 / (word_count_dict[first_word] + num_of_unique_words)
+        if word_pair != ('</s>', '<s>'):
+            # if the word pair exists there is a probability for it 
+            if word_pair in bigram_word_dict:
+                pair_probability = (bigram_word_dict[word_pair] + 1) / (word_count_dict[first_word] + num_of_unique_words)
+            # if it does not, there is a zero and 1 should be used 
+            else:
+                pair_probability = 1 / (word_count_dict[first_word] + num_of_unique_words)
         final_evaluation += math.log2(pair_probability)
     return final_evaluation
 
