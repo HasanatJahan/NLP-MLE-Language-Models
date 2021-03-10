@@ -70,19 +70,6 @@ testing_word_dict_with_unknown = create_word_count_dict(testing_tokens)
 ## 1.  Unigram Maximum Likelihood Model
 # Evaluation of corpus using trained unigram model
 # Create a method to find word probability - assumes you have a word dict built 
-def calculate_word_probability_unigram(word, word_dict):
-    number_of_tokens = sum(word_dict.values())
-    number_of_word_occurence = word_dict[word]
-    word_probability = number_of_word_occurence/number_of_tokens
-    return word_probability
-
-# Now to create a unigram word probability dict 
-def create_unigram_probability_dict(word_dict):
-    probability_dict = dict()
-    for key in word_dict:
-        probability_dict[key] = calculate_word_probability_unigram(key, word_dict)
-    return probability_dict 
-
 
 def calc_unigram_model_evaluation(word_list, training_word_dict_with_unknown):
     number_of_tokens = sum(training_word_dict_with_unknown.values())
