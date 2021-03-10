@@ -1,32 +1,37 @@
 Answer to Question No.1
-The number of unique words in the training corpus is 48849
+The number of unique words in the training corpus is 41739
 
 Answer to Question No.2
 The number of tokens in the training corpus is 2568210
 
 Answer to Question No.3
-The percentage of words unseen in test is 3.8665655799848366
-The percentage of tokens unseen in test is 1.8124782154060648
+The percentage of words unseen in test is 3.6028823058446755
+The percentage of tokens unseen in test is 1.603346113628442
 
 Answer to Question No.4
-Percentage of unique bigrams in test not in training is 27.112232030264817
-Percentage of bigram tokens in test not in training is 22.594142259414227
+Percentage of unique bigrams in test not in training is 25.316990701606084
+Percentage of bigram tokens in test not in training is 20.95536959553696
 
 Answer to Question No.5
-['<s>', 'I', 'look', 'forward', 'to', 'hearing', 'your', 'reply', '.', '</s>']
-1. Unigram Log Probability -9.536492246328308
+['<s>', 'i', 'look', 'forward', 'to', 'hearing', 'your', 'reply', '.', '</s>']
+1. Unigram Log Probability -94.93878209357642
+1. Unigram Average Log Probability -9.493878209357643
 2. Bigram Model Evaluation -0.0
 As it is zero, there is no log probability
-3.Bigram Add One Log Probability -9.870186159738752
+It is undefined
+3.Bigram Add One Log Probability -97.13956016607362
+3.Bigram Add One Average Log Probability -9.713956016607362
 
 Answer to Question No 6
-Perplexity of sentence under unigram model 742.6261186156477
-Perplexity of sentence under add one bigram model 935.8841600841024
+Perplexity of sentence under unigram model 721.0113746656128
+Perplexity of sentence under add one bigram model 839.83145676326
 
 Answer to Question No.7
-The unigram log probability for the test corpus is -10.198063206080784
-Perplexity of test corpus under unigram model 1174.6890561195642
+The unigram log probability for the test corpus is -28592.714419799016
+The unigram average log probability for the test corpus is -9.966090770233189
+Perplexity of test corpus under unigram model 1000.2124621763833
 Bigram Model Evaluation on test corpus -0.0
 As the bigram model evaluation is zero, there is no log probability. It is undefined
-Add One Smoothing Bigram Log Probability -11.131260177471358
-Add One Smoothing Bigram Perplexity 2243.071942178537
+Add One Smoothing Bigram Log Probability -31122.262110508094
+Add One Smoothing Bigram Average Log Probability -10.847773478741058
+Add One Smoothing Bigram Perplexity 1842.914568742921
