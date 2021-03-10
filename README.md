@@ -14,4 +14,9 @@ python3 main.py > output.txt
 ```
 "output.txt" can also be replaced by any other txt file preferable for outputs
 
+Or to simply view results in the terminal do command:
+```
+python3 main.py
+```
+
 3. Open output.txt to view results 
