@@ -15,22 +15,22 @@ Percentage of bigram tokens in test not in training is 21.704586493318885
 Answer to Question No.5
 ['<s>', 'i', 'look', 'forward', 'to', 'hearing', 'your', 'reply', '.', '</s>']
 1. Unigram Log Probability -90.25609082365422
-1. Unigram Average Log Probability -9.025609082365422
+1. Unigram Average Log Probability -10.028454535961579
 2. Bigram Model Evaluation -0.0
 As the bigram model log probability evaluation is zero, there is no average log probability. Perplexity is undefined
 3.Bigram Add One Log Probability -97.13956016607362
-3.Bigram Add One Average Log Probability -9.713956016607362
+3.Bigram Add One Average Log Probability -10.793284462897068
 
 Answer to Question No 6
-Perplexity of sentence under unigram model 521.1695852332095
-Perplexity of sentence under add one bigram model 839.83145676326
+Perplexity of sentence under unigram model 1044.3970236213079
+Perplexity of sentence under add one bigram model 1774.607755085189
 
 Answer to Question No.7
 The unigram log probability for the test corpus is -28124.445292806824
-The unigram average log probability for the test corpus is -9.802873925690772
-Perplexity of test corpus under unigram model 893.2213504247355
+The unigram average log probability for the test corpus is -10.15689609707722
+Perplexity of test corpus under unigram model 1141.6431838536823
 Bigram Model Evaluation on test corpus -0.0
 As the bigram model log probability evaluation is zero, there is no average log probability. Perplexity is undefined
 Add One Smoothing Bigram Log Probability -31072.441669718435
-Add One Smoothing Bigram Average Log Probability -10.830408389584676
-Add One Smoothing Bigram Perplexity 1820.8651778339497
+Add One Smoothing Bigram Average Log Probability -11.221539064542592
+Add One Smoothing Bigram Perplexity 2387.920456133782

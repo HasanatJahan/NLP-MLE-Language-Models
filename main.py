@@ -330,28 +330,45 @@ padded_word_list = create_padded_word_list(input_sentence)
 processed_word_list = replace_unknown_test_word(padded_word_list, training_word_dict_with_unknown)
 print(processed_word_list)
 
+def find_M_value_perplexity(word_list):
+    """This function returns the number of tokens for M in the perplexity calculation
+
+    Args:
+        word_list (list): input word list in the order that they appear in the original sentence they were derived from
+
+    Returns:
+        M (int): the number of tokens without the start symbol <s>
+    """
+    M = 0
+    for i in range(len(word_list)):
+        if word_list[i] != "<s>":
+            M += 1
+    return M 
+
+M_value_sentence = find_M_value_perplexity(processed_word_list)
+
 ##  Unigram Log Probability 
-def calculate_log_probability_unigram(model_evaluation_function, training_word_dict_with_unknown, word_list):
+def calculate_log_probability_unigram(model_evaluation_function, training_word_dict_with_unknown, word_list, M_value):
     """This function calculates the average log probability 
 
     Args:
         model_evaluation_function (function): the unigram log probability calculator function
         training_word_dict_with_unknown (dict): this contains the training words including <unk> and their relevant counts
         word_list (list): input word list in the order that they appear in the original sentence they were derived from
+        M_value (integer) :  the number of tokens without the start symbol <s>
 
     Returns:
         log_probability (float): the average log probability 
     """
 
-    num_of_tokens = len(word_list)
     # calculate the log probability 
-    log_probability = (1/ num_of_tokens) * model_evaluation_function(word_list, training_word_dict_with_unknown)
+    log_probability = (1/ M_value) * model_evaluation_function(word_list, training_word_dict_with_unknown)
     return log_probability 
 
 
 unigram_model_evaluation = calc_unigram_model_evaluation(processed_word_list, training_word_dict_with_unknown)
 print(f"1. Unigram Log Probability {unigram_model_evaluation}" )
-unigram_log_probability = calculate_log_probability_unigram(calc_unigram_model_evaluation, training_word_dict_with_unknown, processed_word_list)
+unigram_log_probability = calculate_log_probability_unigram(calc_unigram_model_evaluation, training_word_dict_with_unknown, processed_word_list, M_value_sentence)
 print(f"1. Unigram Average Log Probability {unigram_log_probability}" )
 
 ## Bigram Log Probability 
@@ -359,7 +376,7 @@ bigram_model_evaluation_line = calc_bigram_model_evaluation(processed_word_list,
 print(f"2. Bigram Model Evaluation {bigram_model_evaluation_line}")
 print("As the bigram model log probability evaluation is zero, there is no average log probability. Perplexity is undefined" )
 
-def calculate_log_probability_bigram(word_list, calc_bigram_evaluation, bigram_word_dict, word_count_dict):
+def calculate_log_probability_bigram(word_list, calc_bigram_evaluation, bigram_word_dict, word_count_dict, M_value):
     """This function calculates the average log probability of sentence under bigram model
 
     Args:
@@ -367,17 +384,17 @@ def calculate_log_probability_bigram(word_list, calc_bigram_evaluation, bigram_w
         calc_bigram_evaluation (function): bigram log probability evaluation function
         bigram_word_dict (dict): a dictionary of bigrams and their respective counts based on the training sentences
         word_count_dict (dict): this contains the training words including <unk> and their relevant counts
+        M_value (integer) :  the number of tokens without the start symbol <s>
 
     Returns:
         log_probability (float): the average log probability
     """
-    num_of_tokens = len(word_list)
     model_evaluation = calc_bigram_evaluation(word_list, bigram_word_dict, word_count_dict)
-    log_probability = (1/ num_of_tokens) * model_evaluation
+    log_probability = (1/ M_value) * model_evaluation
     return log_probability  
 
 # calculates the log probability of add one bigram model
-def calculate_log_probability_bigram_add_one(word_list, calc_bigram_add_one_model_evaluation, bigram_word_dict, word_count_dict):
+def calculate_log_probability_bigram_add_one(word_list, calc_bigram_add_one_model_evaluation, bigram_word_dict, word_count_dict, M_value):
     """This function calculates the average log probability of sentence under bigram model with add one smoothing
 
     Args:
@@ -385,18 +402,18 @@ def calculate_log_probability_bigram_add_one(word_list, calc_bigram_add_one_mode
         calc_bigram_evaluation (function): bigram log probability evaluation function
         bigram_word_dict (dict): a dictionary of bigrams and their respective counts based on the training sentences
         word_count_dict (dict): this contains the training words including <unk> and their relevant counts
+        M_value (integer) :  the number of tokens without the start symbol <s>
 
     Returns:
         log_probability (float): the average log probability
     """    
-    num_of_tokens = len(word_list)
     model_evaluation = calc_bigram_add_one_model_evaluation(word_list, bigram_word_dict, word_count_dict)
-    log_probability = (1/ num_of_tokens) * model_evaluation
+    log_probability = (1/ M_value) * model_evaluation
     return log_probability 
 
 bigram_model_evaluation = calc_bigram_add_one_model_evaluation(processed_word_list, bigram_count_dict, training_word_dict_with_unknown)
 print(f"3.Bigram Add One Log Probability {bigram_model_evaluation}" )   
-bigram_add_one_log_probability = calculate_log_probability_bigram_add_one(processed_word_list, calc_bigram_add_one_model_evaluation, bigram_count_dict, training_word_dict_with_unknown)
+bigram_add_one_log_probability = calculate_log_probability_bigram_add_one(processed_word_list, calc_bigram_add_one_model_evaluation, bigram_count_dict, training_word_dict_with_unknown, M_value_sentence)
 print(f"3.Bigram Add One Average Log Probability {bigram_add_one_log_probability}" )   
 
 # 6. Compute the perplexity of the sentence above under each of the models.
@@ -420,7 +437,9 @@ print("Answer to Question No.7" )
 unigram_model_evaluation_test = calc_unigram_model_evaluation(testing_tokens, training_word_dict_with_unknown)
 print(f"The unigram log probability for the test corpus is {unigram_model_evaluation_test}" )
 
-unigram_log_probability_test  = calculate_log_probability_unigram(calc_unigram_model_evaluation, training_word_dict_with_unknown, testing_tokens)
+M_value_test = find_M_value_perplexity(testing_tokens)
+
+unigram_log_probability_test  = calculate_log_probability_unigram(calc_unigram_model_evaluation, training_word_dict_with_unknown, testing_tokens, M_value_test)
 print(f"The unigram average log probability for the test corpus is {unigram_log_probability_test}" )
 perplexity_unigram_test = 2 ** -(unigram_log_probability_test)
 print(f"Perplexity of test corpus under unigram model {perplexity_unigram_test}" )
@@ -428,7 +447,7 @@ print(f"Perplexity of test corpus under unigram model {perplexity_unigram_test}"
 # Bigram Model Evaluation on Test Corpus
 # first find model evaluation 
 bigram_model_evaluation_test = calc_bigram_model_evaluation(testing_tokens, bigram_count_dict, training_word_dict_with_unknown)
-bigram_log_probability_test = calculate_log_probability_bigram(testing_tokens, calc_bigram_model_evaluation, bigram_count_dict, training_word_dict_with_unknown)
+bigram_log_probability_test = calculate_log_probability_bigram(testing_tokens, calc_bigram_model_evaluation, bigram_count_dict, training_word_dict_with_unknown, M_value_test)
 print(f"Bigram Model Evaluation on test corpus {bigram_model_evaluation_test}")
 print("As the bigram model log probability evaluation is zero, there is no average log probability. Perplexity is undefined" )
 # bigram_perplexity_test = 2 ** -(bigram_log_probability_test)
@@ -439,7 +458,7 @@ print("As the bigram model log probability evaluation is zero, there is no avera
 bigram_add_one_model_evaluation_test = calc_bigram_add_one_model_evaluation(testing_tokens, bigram_count_dict, training_word_dict_with_unknown)
 print(f"Add One Smoothing Bigram Log Probability {bigram_add_one_model_evaluation_test}")
 
-bigram_add_one_log_probability_test = calculate_log_probability_bigram_add_one(testing_tokens, calc_bigram_add_one_model_evaluation, bigram_count_dict, training_word_dict_with_unknown)
+bigram_add_one_log_probability_test = calculate_log_probability_bigram_add_one(testing_tokens, calc_bigram_add_one_model_evaluation, bigram_count_dict, training_word_dict_with_unknown, M_value_test)
 print(f"Add One Smoothing Bigram Average Log Probability {bigram_add_one_log_probability_test}")
 bigram_add_one_perplexity_test = 2 ** -(bigram_add_one_log_probability_test)
 print(f"Add One Smoothing Bigram Perplexity {bigram_add_one_perplexity_test}")
