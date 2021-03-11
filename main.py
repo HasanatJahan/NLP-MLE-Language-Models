@@ -14,6 +14,14 @@ with open("data/test.txt") as f:
 # PREPROCESSING
 
 def create_padded_word_list(sentence_list):
+    """ A function that takes a list of sentences, adds padding and generates 
+
+    Args:
+        sentence_list (list): input list where each element is a sentence in the string format
+
+    Returns:
+        input_word_list (list): a list where each element is a token in the string format in the order they appear in the sentence list 
+    """
     padded_corpus = []
     input_word_list = []
     for line in sentence_list: 
@@ -26,12 +34,20 @@ def create_padded_word_list(sentence_list):
             input_word_list.append(word)
     return input_word_list
 
-
+# Creates training and testing tokens before replacing the unknowns 
 training_tokens = create_padded_word_list(training_lines)
 testing_tokens = create_padded_word_list(testing_lines)
 
 # Create a dictionary of words without <unk>
 def create_word_count_dict(input_word_list):
+    """This function creates a dictionary of words and their respective counts 
+
+    Args:
+        input_word_list (list): a list where each element is a token in the string format in the order they appear in the sentence list
+
+    Returns:
+        input_word_dict (dictionary) : a dictionary of words and their respective counts based on the input_word_list
+    """
     input_word_dict = dict()
     for word in input_word_list:
         if word not in input_word_dict:
@@ -40,6 +56,7 @@ def create_word_count_dict(input_word_list):
             input_word_dict[word] += 1   
     return input_word_dict
 
+# Create the training and testing word discts 
 training_word_dict = create_word_count_dict(training_tokens) # contains word dicts without unknown
 testing_word_dict = create_word_count_dict(testing_tokens) # contains word dicts without unknown
 
@@ -49,11 +66,20 @@ for i in range(len(training_tokens)):
     if training_word_dict[training_tokens[i]] == 1:
         training_tokens[i] = replacement_word
 
-# Creating new dictionaries for training and testing with <unk> present 
+# Creating new dictionaries for training with <unk> present 
 training_word_dict_with_unknown = create_word_count_dict(training_tokens)
 
 # Replace words seen in testing not in training with <unk> 
 def replace_unknown_test_word(testing_tokens, training_word_dict_with_unknown):
+    """This function replaces the tokens in the testing data that do not occur in the training data 
+
+    Args:
+        testing_tokens (list): the list of the testing tokens 
+        training_word_dict_with_unknown (dict): this contains the training words including <unk> and their relevant counts 
+
+    Returns:
+        testing_tokens: input testing tokens with <unk> in relevant places 
+    """
     replacement_word = "<unk>"
     for i in range(len(testing_tokens)):
         word = testing_tokens[i]
@@ -61,8 +87,9 @@ def replace_unknown_test_word(testing_tokens, training_word_dict_with_unknown):
             testing_tokens[i] = replacement_word 
     return testing_tokens   
 
-
+# Replacing testing relevant tokens with <unk>
 testing_tokens = replace_unknown_test_word(testing_tokens, training_word_dict_with_unknown) 
+# Creating new dictionaries for training with <unk> present 
 testing_word_dict_with_unknown = create_word_count_dict(testing_tokens)         
 
 ##################################################################################
@@ -72,6 +99,15 @@ testing_word_dict_with_unknown = create_word_count_dict(testing_tokens)
 # Create a method to find word probability - assumes you have a word dict built 
 
 def calc_unigram_model_evaluation(word_list, training_word_dict_with_unknown):
+    """This function takes returns the unigram log evaluation of an input word list 
+
+    Args:
+        word_list (list): input word list in the order that they appear in the original sentence they were derived from
+        training_word_dict_with_unknown (dict): this contains the training words including <unk> and their relevant counts
+
+    Returns:
+        final_evaluation (float): unigram log probability evaluation of original input word list based on formula 
+    """
     number_of_tokens = sum(training_word_dict_with_unknown.values())
     final_evaluation = 0
     for word in word_list:
@@ -84,9 +120,19 @@ def calc_unigram_model_evaluation(word_list, training_word_dict_with_unknown):
 ## 2. Bigram Maximum Likelihood Model
 # Create a bigram dictionary that has number of times bigram appeared occurences- create a dictionary 
 def count_bigram_occurences(word_list):
+    """This function creates a dictionary of bigrams and their respective counts
+
+    Args:
+        word_list (list): input word list in the order that they appear in the original sentence they were derived from
+
+    Returns:
+        bigram_count_occurence (dict): a dictionary of bigrams and their respective counts based on the word_list
+    """
     bigram_occurence_count = dict()
     for i in range(len(word_list)-1):
         word_pair = word_list[i], word_list[i+1]
+        # NOTE: ADD THIS IN AND THEN SEE VALUES 
+        # if word_pair != ('</s>', '<s>'):
         if word_pair in bigram_occurence_count:
             bigram_occurence_count[word_pair] += 1
         else:
@@ -97,6 +143,16 @@ bigram_count_dict = count_bigram_occurences(training_tokens)
 
 # function to evaluate bigrams 
 def calc_bigram_model_evaluation(word_list, bigram_word_dict, word_count_dict):
+    """This function takes returns the bigram log evaluation of an input word list  
+
+    Args:
+        word_list (list): input word list in the order that they appear in the original sentence they were derived from
+        bigram_word_dict (dict): a dictionary of bigrams and their respective counts based on the training sentences 
+        word_count_dict (dict): this contains the training words including <unk> and their relevant counts
+
+    Returns:
+        final_evaluation (float): bigram log probability evaluation of original input word list based on formula
+    """
     num_of_unique_words = len(word_count_dict)
     final_evaluation = 0
     for i in range(len(word_list) - 1):
@@ -117,6 +173,16 @@ def calc_bigram_model_evaluation(word_list, bigram_word_dict, word_count_dict):
 
 # 3. Add One Bigram Model 
 def calc_bigram_add_one_model_evaluation(word_list, bigram_word_dict, word_count_dict):
+    """This function takes returns the add one smoothing bigram log evaluation of an input word list  
+
+    Args:
+        word_list (list): input word list in the order that they appear in the original sentence they were derived from
+        bigram_word_dict (dict): a dictionary of bigrams and their respective counts based on the training sentences 
+        word_count_dict (dict): this contains the training words including <unk> and their relevant counts
+
+    Returns:
+        final_evaluation (float): add one smoothing bigram log probability evaluation of original input word list based on formula
+    """
     num_of_unique_words = len(word_count_dict)
     final_evaluation = 0
     for i in range(len(word_list) - 1):
@@ -137,6 +203,14 @@ def calc_bigram_add_one_model_evaluation(word_list, bigram_word_dict, word_count
 # 1. How many unique words are there in the training corpus with unknown and padding symbols?
 #Number of keys in dictionary 
 def find_vocabulary_size(training_word_dict_with_unknown):
+    """This function returns the vocabulary size 
+
+    Args:
+        training_word_dict_with_unknown (dict): this contains the training words including <unk> and their relevant counts
+
+    Returns:
+        num_of_unique_words[integer]: number of keys in the dictionary that represent the number of unique words 
+    """
     num_of_unique_words = len(training_word_dict_with_unknown)
     return num_of_unique_words
 
@@ -146,6 +220,14 @@ print(f"The number of unique words in the training corpus is {number_of_unique_w
 
 # 2. How many tokens are there in the training corpus? 
 def find_token_number(training_word_dict_with_unknown):
+    """This function returns the total number of tokens based on a dictionary
+
+    Args:
+        training_word_dict_with_unknown (dict): this contains the training words including <unk> and their relevant counts
+
+    Returns:
+        total_token_num (integer): sum of key values in the dictionary that represent the total number of tokens 
+    """
     total_token_num = sum(training_word_dict_with_unknown.values())
     return total_token_num
 
@@ -156,6 +238,14 @@ print(f"The number of tokens in the training corpus is {find_token_number(traini
 # 3. Find percentage of word tokens and word types in the test corpus that did not 
 # occur in training before mapping unknown in training and test data
 def question_three(training_word_dict, testing_word_dict):
+    """This function returns the answer to question number three, 
+    It prints the percentage of words unseen in the test data, and the percentage
+    of tokens unseen in test data compared to the training data.  
+
+    Args:
+        training_word_dict (dict):  this contains the training words and their relevant counts
+        testing_word_dict (dict): this contains the testing words and their relevant counts
+    """
     unseen_test_word_dict = dict()
     # Create a dictionary of testing words not in training
     for key, value in testing_word_dict.items():
@@ -186,6 +276,16 @@ question_three(training_word_dict, testing_word_dict)
 # What percentage of bigrams (bigram types and bigram tokens) in the test corpus 
 # did not occur in training (treat "< unk >" as a regular token that has been observed).
 def question_four(testing_words, bigram_count_dict, count_bigram_occurences):
+    """This function returns the answer to question number 4. It prints the 
+    percentage of unique bigrams in test not in training and the percentage of bigram 
+    tokens in test not in training. 
+
+    Args:
+        testing_words (list): a list of testing words as they appear in the sentence in original test input sentences 
+        bigram_count_dict (dict): a dictionary of bigrams and their respective counts based on the training sentences
+        count_bigram_occurences (function): function that creates a bigram dictionary based on input sequential word list 
+
+    """
     # create the bigram dictionary for test words 
     test_bigram_word_dict = count_bigram_occurences(testing_words)
     
@@ -233,7 +333,18 @@ processed_word_list = replace_unknown_test_word(padded_word_list, training_word_
 print(processed_word_list)
 
 ##  Unigram Log Probability 
-def calculate_log_probability_unigram(model_evaluation_function, training_word_dict_with_unknown, word_list):    
+def calculate_log_probability_unigram(model_evaluation_function, training_word_dict_with_unknown, word_list):
+    """This function calculates the average log probability 
+
+    Args:
+        model_evaluation_function (function): the unigram log probability calculator function
+        training_word_dict_with_unknown (dict): this contains the training words including <unk> and their relevant counts
+        word_list (list): input word list in the order that they appear in the original sentence they were derived from
+
+    Returns:
+        log_probability (float): the average log probability 
+    """
+
     num_of_tokens = len(word_list)
     # calculate the log probability 
     log_probability = (1/ num_of_tokens) * model_evaluation_function(word_list, training_word_dict_with_unknown)
@@ -250,13 +361,35 @@ bigram_model_evaluation_line = calc_bigram_model_evaluation(processed_word_list,
 print(f"2. Bigram Model Evaluation {bigram_model_evaluation_line}\nAs it is zero, there is no log probability\nIt is undefined" )
 
 def calculate_log_probability_bigram(word_list, calc_bigram_evaluation, bigram_word_dict, word_count_dict):
+    """This function calculates the average log probability of sentence under bigram model
+
+    Args:
+        word_list (list): input word list in the order that they appear in the original sentence they were derived from
+        calc_bigram_evaluation (function): bigram log probability evaluation function
+        bigram_word_dict (dict): a dictionary of bigrams and their respective counts based on the training sentences
+        word_count_dict (dict): this contains the training words including <unk> and their relevant counts
+
+    Returns:
+        log_probability (float): the average log probability
+    """
     num_of_tokens = len(word_list)
     model_evaluation = calc_bigram_evaluation(word_list, bigram_word_dict, word_count_dict)
     log_probability = (1/ num_of_tokens) * model_evaluation
     return log_probability  
 
 # calculates the log probability of add one bigram model
-def calculate_log_probability_bigram_add_one(word_list,calc_bigram_add_one_model_evaluation, bigram_word_dict, word_count_dict):    
+def calculate_log_probability_bigram_add_one(word_list, calc_bigram_add_one_model_evaluation, bigram_word_dict, word_count_dict):
+    """This function calculates the average log probability of sentence under bigram model with add one smoothing
+
+    Args:
+        word_list (list): input word list in the order that they appear in the original sentence they were derived from
+        calc_bigram_evaluation (function): bigram log probability evaluation function
+        bigram_word_dict (dict): a dictionary of bigrams and their respective counts based on the training sentences
+        word_count_dict (dict): this contains the training words including <unk> and their relevant counts
+
+    Returns:
+        log_probability (float): the average log probability
+    """    
     num_of_tokens = len(word_list)
     model_evaluation = calc_bigram_add_one_model_evaluation(word_list, bigram_word_dict, word_count_dict)
     log_probability = (1/ num_of_tokens) * model_evaluation
