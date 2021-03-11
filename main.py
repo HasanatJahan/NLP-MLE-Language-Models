@@ -165,7 +165,7 @@ def calc_bigram_model_evaluation(word_list, bigram_word_dict, word_count_dict):
                 pair_probability = 0
                 final_evaluation *= pair_probability
                 return final_evaluation
-        final_evaluation += math.log2(pair_probability)
+            final_evaluation += math.log2(pair_probability)
     return final_evaluation
 
 
@@ -193,7 +193,7 @@ def calc_bigram_add_one_model_evaluation(word_list, bigram_word_dict, word_count
             # if it does not, there is a zero and 1 should be used 
             else:
                 pair_probability = 1 / (word_count_dict[first_word] + num_of_unique_words)
-        final_evaluation += math.log2(pair_probability)
+            final_evaluation += math.log2(pair_probability)
     return final_evaluation
 
 ##############################################################################

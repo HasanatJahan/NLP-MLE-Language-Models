@@ -31,6 +31,6 @@ The unigram average log probability for the test corpus is -9.802873925690772
 Perplexity of test corpus under unigram model 893.2213504247355
 Bigram Model Evaluation on test corpus -0.0
 As the bigram model log probability evaluation is zero, there is no average log probability. Perplexity is undefined
-Add One Smoothing Bigram Log Probability -31250.970622838657
-Add One Smoothing Bigram Average Log Probability -10.892635281574993
-Add One Smoothing Bigram Perplexity 1901.1218424221317
+Add One Smoothing Bigram Log Probability -31072.441669718435
+Add One Smoothing Bigram Average Log Probability -10.830408389584676
+Add One Smoothing Bigram Perplexity 1820.8651778339497
