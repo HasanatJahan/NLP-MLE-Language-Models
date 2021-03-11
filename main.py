@@ -159,7 +159,7 @@ def calc_bigram_model_evaluation(word_list, bigram_word_dict, word_count_dict):
         if word_pair != ('</s>', '<s>'):
             # if the word pair exists there is a probability for it 
             if word_pair in bigram_word_dict:
-                pair_probability = (bigram_word_dict[word_pair]) / (word_count_dict[first_word] + num_of_unique_words)
+                pair_probability = (bigram_word_dict[word_pair]) / (word_count_dict[first_word])
             # if it does not, zero should be used 
             else:
                 pair_probability = 0
