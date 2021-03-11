@@ -1,5 +1,4 @@
 # imports 
-import re
 import math 
 
 # First load in the data 
@@ -131,12 +130,11 @@ def count_bigram_occurences(word_list):
     bigram_occurence_count = dict()
     for i in range(len(word_list)-1):
         word_pair = word_list[i], word_list[i+1]
-        # NOTE: ADD THIS IN AND THEN SEE VALUES 
-        # if word_pair != ('</s>', '<s>'):
-        if word_pair in bigram_occurence_count:
-            bigram_occurence_count[word_pair] += 1
-        else:
-            bigram_occurence_count[word_pair] = 1
+        if word_pair != ('</s>', '<s>'):
+            if word_pair in bigram_occurence_count:
+                bigram_occurence_count[word_pair] += 1
+            else:
+                bigram_occurence_count[word_pair] = 1
     return bigram_occurence_count
 
 bigram_count_dict = count_bigram_occurences(training_tokens)
@@ -216,7 +214,7 @@ def find_vocabulary_size(training_word_dict_with_unknown):
 
 number_of_unique_words_training = find_vocabulary_size(training_word_dict_with_unknown)
 print("Answer to Question No.1")
-print(f"The number of unique words in the training corpus is {number_of_unique_words_training}" )
+print(f'The number of unique words in the training corpus is {number_of_unique_words_training}')
 
 # 2. How many tokens are there in the training corpus? 
 def find_token_number(training_word_dict_with_unknown):
@@ -358,7 +356,8 @@ print(f"1. Unigram Average Log Probability {unigram_log_probability}" )
 
 ## Bigram Log Probability 
 bigram_model_evaluation_line = calc_bigram_model_evaluation(processed_word_list, bigram_count_dict, training_word_dict_with_unknown)
-print(f"2. Bigram Model Evaluation {bigram_model_evaluation_line}\nAs it is zero, there is no log probability\nIt is undefined" )
+print(f"2. Bigram Model Evaluation {bigram_model_evaluation_line}")
+print("As the bigram model log probability evaluation is zero, there is no average log probability. Perplexity is undefined" )
 
 def calculate_log_probability_bigram(word_list, calc_bigram_evaluation, bigram_word_dict, word_count_dict):
     """This function calculates the average log probability of sentence under bigram model
@@ -431,7 +430,7 @@ print(f"Perplexity of test corpus under unigram model {perplexity_unigram_test}"
 bigram_model_evaluation_test = calc_bigram_model_evaluation(testing_tokens, bigram_count_dict, training_word_dict_with_unknown)
 bigram_log_probability_test = calculate_log_probability_bigram(testing_tokens, calc_bigram_model_evaluation, bigram_count_dict, training_word_dict_with_unknown)
 print(f"Bigram Model Evaluation on test corpus {bigram_model_evaluation_test}")
-print("As the bigram model evaluation is zero, there is no log probability. It is undefined" )
+print("As the bigram model log probability evaluation is zero, there is no average log probability. Perplexity is undefined" )
 # bigram_perplexity_test = 2 ** -(bigram_log_probability_test)
 # print(f"Bigram Log Perplexity {bigram_perplexity_test}")
 
