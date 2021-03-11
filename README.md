@@ -3,7 +3,7 @@
 ## Pre-requisites 
 1. Must have Python 3 installed 
 2. Files data/train.txt and data/test.txt should be present
-3. Directory named "data" should be present 
+3. Directory named "data" should be present in the same directory as main.py file 
 4. Have an output file "output.txt" present, this can also be any file you prefer  
 
 # To run for output and view
