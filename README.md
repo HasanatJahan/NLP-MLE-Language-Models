@@ -1,4 +1,4 @@
-# Homework 1 - CS381 - Maximum Likelihood Estimate Languaage Modeling in Python 
+# Homework 1 - CS381 - Maximum Likelihood Estimate Language Modeling in Python 
 
 ## Pre-requisites 
 1. Must have Python 3 installed 
